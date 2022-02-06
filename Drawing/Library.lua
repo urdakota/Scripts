@@ -114,16 +114,14 @@ function drawLib:Image(Args)
  -- Set Defaults
   imageObj.Position = UDim2Vector(UDim2.new(0.5,0,0,0));
   imageObj.Size = UDim2Vector(UDim2.new(0.5,0,0.5,0));
-  imageObj.Color = Color3.new(1,1,1);
   imageObj.Visible = true;
   imageObj.Data = "";
   imageObj.Rounding = 32;
   imageObj.Transparency = 0.5;
   imageObj.ZIndex = 1;
  --[[ INSTRUCTIONS FOR PROPERTIES OF IMAGE
-  Position: Center of Image (Udim2/Vector2);
-  Size: Size of Image (Udim2/Vector2);
-  Color: Color of Image (Color3);
+  Position: Center of Image (UDim2/Vector2);
+  Size: Size of Image (UDim2/Vector2);
   Visible: If Image is Shown;
   Transparency: Image's Transparency;
   Rounding: Image's Rounding of edges;
@@ -149,7 +147,7 @@ function drawLib:Image(Args)
  })
  -- Update Image with base properties
   for i,v in pairs(Args) do
-   if table.find({"Position","Size","Color","Visible","Transparency","ZIndex","Rounding","Data"},i) then
+   if table.find({"Position","Size","Visible","Transparency","ZIndex","Rounding","Data"},i) then
     image[i] = v;
    end
   end
@@ -169,7 +167,7 @@ function drawLib:Circle(Args)
   circleObj.Thickness = 2;
   circleObj.Filled = false;
  --[[ INSTRUCTIONS FOR PROPERTIES OF CIRCLE
-  Positon: Center of Circle (Udim2/Vector2);
+  Positon: Center of Circle (UDim2/Vector2);
   Size: Size of Circle (Radius);
   Color: Color of Circle (Color3);
   Visible: If Circle is Shown;
@@ -215,8 +213,8 @@ function drawLib:Square(Args)
   squareObj.ZIndex = 1;
   squareObj.Thickness = 2;
  --[[ INSTRUCTIONS FOR PROPERTIES OF SQUARE
-  Position: Center of Square (Udim2/Vector2);
-  Size: Size of Square (Udim2/Vector2);
+  Position: Center of Square (UDim2/Vector2);
+  Size: Size of Square (UDim2/Vector2);
   Color: Color of Square (Color3);
   Visible: If Square is Shown;
   Transparency: Square's Transparency;
@@ -263,10 +261,10 @@ function drawLib:Rect(Args)
   rectObj.ZIndex = 1;
   rectObj.Thickness = 2;
  --[[ INSTRUCTIONS FOR PROPERTIES OF SQUARE
-  PointA: Top Right of Rect (Udim2/Vector2);
-  PointB: Top Left of Rect (Udim2/Vector2);
-  PointC: Bottom Left of Rect (Udim2/Vector2);
-  PointD: Bottom Right of Rect (Udim2/Vector2);
+  PointA: Top Right of Rect (UDim2/Vector2);
+  PointB: Top Left of Rect (UDim2/Vector2);
+  PointC: Bottom Left of Rect (UDim2/Vector2);
+  PointD: Bottom Right of Rect (UDim2/Vector2);
   Color: Color of Rect (Color3);
   Visible: If Rect is Shown;
   Transparency: Rect's Transparency;
@@ -322,9 +320,9 @@ function drawLib:Triangle(Args)
   triObj.ZIndex = 1;
   triObj.Thickness = 2;
  --[[ INSTRUCTIONS FOR PROPERTIES OF TRIANGLE
-  PointA: Top of Triangle (Udim2/Vector2);
-  PointB: Bottom Left of Triangle (Udim2/Vector2);
-  PointC: Bottom Right of Triangle (Udim2/Vector2);
+  PointA: Top of Triangle (UDim2/Vector2);
+  PointB: Bottom Left of Triangle (UDim2/Vector2);
+  PointC: Bottom Right of Triangle (UDim2/Vector2);
   Color: Color of Triangle (Color3);
   Visible: If Triangle is Shown;
   Transparency: Triangle's Transparency;

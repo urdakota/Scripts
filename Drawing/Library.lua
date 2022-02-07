@@ -6,13 +6,27 @@ local drawLib = {};
  local UDim2Vector = function(udim)
   return Vector2.new((ScreenSize.X * udim.X.Scale) + udim.X.Offset,(ScreenSize.Y * udim.Y.Scale) + udim.Y.Offset)
  end;
+ function mouseOver(Values)
+  local X1, Y1, X2, Y2 = Values[1], Values[2], Values[3], Values[4]
+  local ml = game:GetService("UserInputService"):GetMouseLocation()
+  return (ml.x >= X1 and ml.x <= (X1 + (X2 - X1))) and (ml.y >= Y1 and ml.y <= (Y1 + (Y2 - Y1)))
+ end
+ function over(obj)
+  if typeof(obj.Size) == "number" then
+   return obj.Visible == true and mouseOver({obj.Position.X- obj.Size/2,obj.Position.Y,obj.Position.X + obj.Size/2,obj.Position.Y + obj.Size})
+  else
+   return obj.Visible == true and mouseOver({obj.Position.X,obj.Position.Y,obj.Position.X + obj.Size.X,obj.Position.Y + obj.Size.Y})
+  end
+ end
+ function overpoint(obj)
+  return obj.Visible == true and mouseOver({obj.PointB.X,obj.PointB.Y,obj.PointD.X, obj.PointD.Y})
+ end
  game:GetService("RunService").RenderStepped:Connect(function()
   ScreenSize = cam.ViewportSize;
   UDim2Vector = function(udim)
    return Vector2.new((ScreenSize.X * udim.X.Scale) + udim.X.Offset,(ScreenSize.Y * udim.Y.Scale) + udim.Y.Offset)
   end;
  end)
-
 -- Drawing
 function drawLib:Line(Args)
  local line,lineObj = {}, Drawing.new("Line");
@@ -34,6 +48,20 @@ function drawLib:Line(Args)
   Thickness: Thickness in pixels of line;
  ]]
  setmetatable(line, {
+  __index = function(Table, Key)
+    -- Thanks synapse Source!!!
+   if not rawget(lineObj, "__OBJECT_EXISTS") then error("render object destroyed") end
+
+   if K == "Destroy" then 
+    return newcclosure(function() 
+     destroyrenderobject(lineObj)
+     rawset(lineObj, "__OBJECT", nil) 
+     rawset(lineObj, "__OBJECT_EXISTS", false)
+    end) 
+   end
+
+   return getrenderproperty(lineObj, Key)
+  end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "from" then
     if typeof(value) == "UDim2" then value = UDim2Vector(value) end
@@ -48,6 +76,7 @@ function drawLib:Line(Args)
    else
     lineObj[key] = value;
    end
+   return lineObj[key];
   end
  })
  -- Update Line with base properties
@@ -56,8 +85,7 @@ function drawLib:Line(Args)
     line[i] = v;
    end
   end
- -- Remove Line
- return line, lineObj;
+ return line;
 end
 function drawLib:Text(Args)
  local text,textObj = {}, Drawing.new("Text");
@@ -87,6 +115,20 @@ function drawLib:Text(Args)
   ZIndex: Text's Position above screen objects;
  ]]
  setmetatable(text, {
+  __index = function(Table, Key)
+    -- Thanks synapse Source!!!
+   if not rawget(textObj, "__OBJECT_EXISTS") then error("render object destroyed") end
+
+   if tostring(k):lower() == "destroy" then 
+    return newcclosure(function() 
+     destroyrenderobject(textObj)
+     rawset(textObj, "__OBJECT", nil) 
+     rawset(textObj, "__OBJECT_EXISTS", false)
+    end) 
+   end
+
+   return getrenderproperty(textObj, Key)
+  end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
     if typeof(value) == "UDim2" then value = UDim2Vector(value) end
@@ -98,6 +140,7 @@ function drawLib:Text(Args)
    else
     textObj[key] = value;
    end
+   return textObj[key];
   end
  })
  -- Update Text with base properties
@@ -107,7 +150,88 @@ function drawLib:Text(Args)
    end
   end
  -- Remove Text
- return text, textObj;
+ local texttbl = {};
+ local overobj = false;
+ local 1downobj = false;
+ local 1upobj = false;
+ local 2downobj = false;
+ local 2upobj = false;
+ local enterfunc = function() end;
+ local leavefunc = function() end;
+ local 1downfunc = function() end;
+ local 2downfunc = function() end;
+ local 1upfunc = function() end;
+ local 2upfunc = function() end;
+ local 1clickfunc = function() end;
+ local 2clickfunc = function() end;
+ game:GetService("RunService").RenderStepped:Connect(function()
+  if over(textObj) then
+   if overobj == false then enterfunc() end
+   overobj = true;
+  else
+   if overobj == true then leavefunc() end
+   overobj = false;
+  end
+ end)
+ uis.InputBegan:Connect(function(input) 
+  if input.UserInputType.Name == 'MouseButton1' then 
+   if over(textObj) then 
+    1downobj = true; 
+    1upobj = false; 
+    1downfunc(); 
+   end 
+  end 
+  if input.UserInputType.Name == 'MouseButton2' then 
+   if over(textObj) then 
+    2downobj = true; 
+    2upobj = false; 
+    2downfunc(); 
+   end 
+  end 
+ end)
+ uis.InputEnded:Connect(function(input) 
+  if input.UserInputType.Name == 'MouseButton1' then 
+   if over(textObj) then 
+    if 1downobj then 1clickfunc() end
+    1downobj = false;
+    1upobj = true; 
+    1upfunc(); 
+   end 
+  end 
+  if input.UserInputType.Name == 'MouseButton2' then 
+   if over(textObj) then 
+    if 2downobj then 2clickfunc() end
+    2downobj = false;
+    2upobj = true; 
+    2upfunc(); 
+   end 
+  end 
+ end)
+ function texttbl:MouseEnter(callback)
+  enterfunc = callback;
+ end
+ function texttbl:MouseLeave(callback)
+  leavefunc = callback;
+ end
+ function texttbl:MouseButton1Down(callback)
+  1downfunc = callback;
+ end
+ function texttbl:MouseButton1Up(callback)
+  1upfunc = callback;
+ end
+ function texttbl:MouseButton1Click(callback)
+  1clickfunc = callback;
+ end
+ function texttbl:MouseButton2Down(callback)
+  2downfunc = callback;
+ end
+ function texttbl:MouseButton2Up(callback)
+  2upfunc = callback;
+ end
+ function texttbl:MouseButton2Click(callback)
+  2clickfunc = callback;
+ end
+ return text,texttbl;
 end
 function drawLib:Image(Args)
  local image,imageObj = {}, Drawing.new("Image");
@@ -126,9 +250,24 @@ function drawLib:Image(Args)
   Transparency: Image's Transparency;
   Rounding: Image's Rounding of edges;
   Data: Image through game:HttpGet;
+  Color: Color from RGB;
   ZIndex: Image's Position above screen objects;
  ]]
  setmetatable(image, {
+  __index = function(Table, Key)
+    -- Thanks synapse Source!!!
+   if not rawget(imageObj, "__OBJECT_EXISTS") then error("render object destroyed") end
+
+   if tostring(k):lower() == "destroy" then 
+    return newcclosure(function() 
+     destroyrenderobject(imageObj)
+     rawset(imageObj, "__OBJECT", nil) 
+     rawset(imageObj, "__OBJECT_EXISTS", false)
+    end) 
+   end
+
+   return getrenderproperty(imageObj, Key)
+  end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
     if typeof(value) == "UDim2" then value = UDim2Vector(value) end
@@ -140,9 +279,12 @@ function drawLib:Image(Args)
     if typeof(value) == "CFrame" then value = Vector2.new(cam:WorldToScreenPoint(value.p).X,cam:WorldToScreenPoint(value.p).Y) end
     if typeof(value) == "Vector3" then value =  Vector2.new(cam:WorldToScreenPoint(value).X,cam:WorldToScreenPoint(value).Y) end
     imageObj["Size"] = value;
+   elseif tostring(key):lower() == "color" then
+    imageObj["Data"] = game:HttpGet('https://www.htmlcsscolor.com/preview/gallery/'..tostring(value.R)..tostring(value.G)..tostring(value.B)..'.png')
    else
     imageObj[key] = value;
    end
+   return imageObj[key];
   end
  })
  -- Update Image with base properties
@@ -151,8 +293,88 @@ function drawLib:Image(Args)
     image[i] = v;
    end
   end
- -- Remove Image
- return image, imageObj;
+ local imagefnc = {};
+ local overobj = false;
+ local 1downobj = false;
+ local 1upobj = false;
+ local 2downobj = false;
+ local 2upobj = false;
+ local enterfunc = function() end;
+ local leavefunc = function() end;
+ local 1downfunc = function() end;
+ local 2downfunc = function() end;
+ local 1upfunc = function() end;
+ local 2upfunc = function() end;
+ local 1clickfunc = function() end;
+ local 2clickfunc = function() end;
+ game:GetService("RunService").RenderStepped:Connect(function()
+  if over(imageObj) then
+   if overobj == false then enterfunc() end
+   overobj = true;
+  else
+   if overobj == true then leavefunc() end
+   overobj = false;
+  end
+ end)
+ uis.InputBegan:Connect(function(input) 
+  if input.UserInputType.Name == 'MouseButton1' then 
+   if over(imageObj) then 
+    1downobj = true; 
+    1upobj = false; 
+    1downfunc(); 
+   end 
+  end 
+  if input.UserInputType.Name == 'MouseButton2' then 
+   if over(imageObj) then 
+    2downobj = true; 
+    2upobj = false; 
+    2downfunc(); 
+   end 
+  end 
+ end)
+ uis.InputEnded:Connect(function(input) 
+  if input.UserInputType.Name == 'MouseButton1' then 
+   if over(imageObj) then 
+    if 1downobj then 1clickfunc() end
+    1downobj = false;
+    1upobj = true; 
+    1upfunc(); 
+   end 
+  end 
+  if input.UserInputType.Name == 'MouseButton2' then 
+   if over(imageObj) then 
+    if 2downobj then 2clickfunc() end
+    2downobj = false;
+    2upobj = true; 
+    2upfunc(); 
+   end 
+  end 
+ end)
+ function imagefnc:MouseEnter(callback)
+  enterfunc = callback;
+ end
+ function imagefnc:MouseLeave(callback)
+  leavefunc = callback;
+ end
+ function imagefnc:MouseButton1Down(callback)
+  1downfunc = callback;
+ end
+ function imagefnc:MouseButton1Up(callback)
+  1upfunc = callback;
+ end
+ function imagefnc:MouseButton1Click(callback)
+  1clickfunc = callback;
+ end
+ function imagefnc:MouseButton2Down(callback)
+  2downfunc = callback;
+ end
+ function imagefnc:MouseButton2Up(callback)
+  2upfunc = callback;
+ end
+ function imagefnc:MouseButton2Click(callback)
+  2clickfunc = callback;
+ end
+ return image,imagefnc;
 end
 function drawLib:Circle(Args)
  local circle,circleObj = {}, Drawing.new("Circle");
@@ -178,6 +400,20 @@ function drawLib:Circle(Args)
   Thickness: Thickness in pixels of cricle;
  ]]
  setmetatable(circle, {
+  __index = function(Table, Key)
+    -- Thanks synapse Source!!!
+   if not rawget(circleObj, "__OBJECT_EXISTS") then error("render object destroyed") end
+
+   if K == "Destroy" then 
+    return newcclosure(function() 
+     destroyrenderobject(circleObj)
+     rawset(circleObj, "__OBJECT", nil) 
+     rawset(circleObj, "__OBJECT_EXISTS", false)
+    end) 
+   end
+
+   return getrenderproperty(circleObj, Key)
+  end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
     if typeof(value) == "UDim2" then value = UDim2Vector(value) end
@@ -191,6 +427,7 @@ function drawLib:Circle(Args)
    else
     circleObj[key] = value;
    end
+   return 
   end 
  })
  -- Update Circle with base properties
@@ -199,8 +436,7 @@ function drawLib:Circle(Args)
     circle[i] = v;
    end
   end
- -- Remove Circle
- return circle, circleObj;
+ return circle;
 end
 function drawLib:Square(Args)
  local square,squareObj = {}, Drawing.new("Square");
@@ -223,6 +459,20 @@ function drawLib:Square(Args)
   Thickness: Thickness in pixels of Square;
  ]]
  setmetatable(square, {
+  __index = function(Table, Key)
+    -- Thanks synapse Source!!!
+   if not rawget(squareObj, "__OBJECT_EXISTS") then error("render object destroyed") end
+
+   if tostring(K):lower() == "destroy" then 
+    return newcclosure(function() 
+     destroyrenderobject(squareObj)
+     rawset(squareObj, "__OBJECT", nil) 
+     rawset(squareObj, "__OBJECT_EXISTS", false)
+    end) 
+   end
+
+   return getrenderproperty(squareObj, Key)
+  end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
     if typeof(value) == "UDim2" then value = UDim2Vector(value) end
@@ -237,6 +487,7 @@ function drawLib:Square(Args)
    else
     squareObj[key] = value;
    end
+   return squareObj[key];
   end
  })
  -- Update Square with base properties
@@ -245,8 +496,89 @@ function drawLib:Square(Args)
     square[i] = v;
    end
   end
- -- Remove Square
- return square, squareObj;
+ 
+  local squarefnc = {};
+  local overobj = false;
+  local 1downobj = false;
+  local 1upobj = false;
+  local 2downobj = false;
+  local 2upobj = false;
+  local enterfunc = function() end;
+  local leavefunc = function() end;
+  local 1downfunc = function() end;
+  local 2downfunc = function() end;
+  local 1upfunc = function() end;
+  local 2upfunc = function() end;
+  local 1clickfunc = function() end;
+  local 2clickfunc = function() end;
+  game:GetService("RunService").RenderStepped:Connect(function()
+   if over(squareObj) then
+    if overobj == false then enterfunc() end
+    overobj = true;
+   else
+    if overobj == true then leavefunc() end
+    overobj = false;
+   end
+  end)
+  uis.InputBegan:Connect(function(input) 
+   if input.UserInputType.Name == 'MouseButton1' then 
+    if over(squareObj) then 
+     1downobj = true; 
+     1upobj = false; 
+     1downfunc(); 
+    end 
+   end 
+   if input.UserInputType.Name == 'MouseButton2' then 
+    if over(squareObj) then 
+     2downobj = true; 
+     2upobj = false; 
+     2downfunc(); 
+    end 
+   end 
+  end)
+  uis.InputEnded:Connect(function(input) 
+   if input.UserInputType.Name == 'MouseButton1' then 
+    if over(squareObj) then 
+     if 1downobj then 1clickfunc() end
+     1downobj = false;
+     1upobj = true; 
+     1upfunc(); 
+    end 
+   end 
+   if input.UserInputType.Name == 'MouseButton2' then 
+    if over(squareObj) then 
+     if 2downobj then 2clickfunc() end
+     2downobj = false;
+     2upobj = true; 
+     2upfunc(); 
+    end 
+   end 
+  end)
+  function squarefnc:MouseEnter(callback)
+   enterfunc = callback;
+  end
+  function squarefnc:MouseLeave(callback)
+   leavefunc = callback;
+  end
+  function squarefnc:MouseButton1Down(callback)
+   1downfunc = callback;
+  end
+  function squarefnc:MouseButton1Up(callback)
+   1upfunc = callback;
+  end
+  function squarefnc:MouseButton1Click(callback)
+   1clickfunc = callback;
+  end
+  function squarefnc:MouseButton2Down(callback)
+   2downfunc = callback;
+  end
+  function squarefnc:MouseButton2Up(callback)
+   2upfunc = callback;
+  end
+  function squarefnc:MouseButton2Click(callback)
+   2clickfunc = callback;
+  end
+ return square,squarefnc;
 end
 function drawLib:Rect(Args)
  local rect,rectObj = {}, Drawing.new("Quad");
@@ -273,6 +605,20 @@ function drawLib:Rect(Args)
   Thickness: Thickness in pixels of Rect;
  ]]
  setmetatable(rect, {
+  __index = function(Table, Key)
+    -- Thanks synapse Source!!!
+   if not rawget(rectObj, "__OBJECT_EXISTS") then error("render object destroyed") end
+
+   if tostring(K):lower() == "destroy" then 
+    return newcclosure(function() 
+     destroyrenderobject(rectObj)
+     rawset(rectObj, "__OBJECT", nil) 
+     rawset(rectObj, "__OBJECT_EXISTS", false)
+    end) 
+   end
+
+   return getrenderproperty(rectObj, Key)
+  end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "pointa" then
     if typeof(value) == "UDim2" then value = UDim2Vector(value) end
@@ -297,6 +643,7 @@ function drawLib:Rect(Args)
    else
     rectObj[key] = value;
    end
+   return rectObj[key];
   end
  })
  -- Update Rect with base properties
@@ -305,8 +652,89 @@ function drawLib:Rect(Args)
     rect[i] = v;
    end
   end
- -- Remove Rect
- return rect, rectObj;
+ 
+  local recttbl = {};
+  local overobj = false;
+  local 1downobj = false;
+  local 1upobj = false;
+  local 2downobj = false;
+  local 2upobj = false;
+  local enterfunc = function() end;
+  local leavefunc = function() end;
+  local 1downfunc = function() end;
+  local 2downfunc = function() end;
+  local 1upfunc = function() end;
+  local 2upfunc = function() end;
+  local 1clickfunc = function() end;
+  local 2clickfunc = function() end;
+  game:GetService("RunService").RenderStepped:Connect(function()
+   if overpoint(rectObj) then
+    if overobj == false then enterfunc() end
+    overobj = true;
+   else
+    if overobj == true then leavefunc() end
+    overobj = false;
+   end
+  end)
+  uis.InputBegan:Connect(function(input) 
+   if input.UserInputType.Name == 'MouseButton1' then 
+    if overpoint(rectObj) then 
+     1downobj = true; 
+     1upobj = false; 
+     1downfunc(); 
+    end 
+   end 
+   if input.UserInputType.Name == 'MouseButton2' then 
+    if overpoint(rectObj) then 
+     2downobj = true; 
+     2upobj = false; 
+     2downfunc(); 
+    end 
+   end 
+  end)
+  uis.InputEnded:Connect(function(input) 
+   if input.UserInputType.Name == 'MouseButton1' then 
+    if overpoint(rectObj) then 
+     if 1downobj then 1clickfunc() end
+     1downobj = false;
+     1upobj = true; 
+     1upfunc(); 
+    end 
+   end 
+   if input.UserInputType.Name == 'MouseButton2' then 
+    if overpoint(rectObj) then 
+     if 2downobj then 2clickfunc() end
+     2downobj = false;
+     2upobj = true; 
+     2upfunc(); 
+    end 
+   end 
+  end)
+  function recttbl:MouseEnter(callback)
+   enterfunc = callback;
+  end
+  function recttbl:MouseLeave(callback)
+   leavefunc = callback;
+  end
+  function recttbl:MouseButton1Down(callback)
+   1downfunc = callback;
+  end
+  function recttbl:MouseButton1Up(callback)
+   1upfunc = callback;
+  end
+  function recttbl:MouseButton1Click(callback)
+   1clickfunc = callback;
+  end
+  function recttbl:MouseButton2Down(callback)
+   2downfunc = callback;
+  end
+  function recttbl:MouseButton2Up(callback)
+   2upfunc = callback;
+  end
+  function recttbl:MouseButton2Click(callback)
+   2clickfunc = callback;
+  end
+ return rect,recttbl;
 end
 function drawLib:Triangle(Args)
  local tri,triObj = {}, Drawing.new("Triangle");
@@ -331,6 +759,20 @@ function drawLib:Triangle(Args)
   Thickness: Thickness in pixels of Triangle;
  ]]
  setmetatable(tri, {
+  __index = function(Table, Key)
+    -- Thanks synapse Source!!!
+   if not rawget(triObj, "__OBJECT_EXISTS") then error("render object destroyed") end
+
+   if K == "Destroy" then 
+    return newcclosure(function() 
+     destroyrenderobject(triObj)
+     rawset(triObj, "__OBJECT", nil) 
+     rawset(triObj, "__OBJECT_EXISTS", false)
+    end) 
+   end
+
+   return getrenderproperty(triObj, Key)
+  end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "pointa" then
     if typeof(value) == "UDim2" then value = UDim2Vector(value) end
@@ -350,6 +792,7 @@ function drawLib:Triangle(Args)
    else
     triObj[key] = value;
    end
+   return triObj[key];
   end
  })
  -- Update Triangle with base properties
@@ -358,8 +801,7 @@ function drawLib:Triangle(Args)
     tri[i] = v;
    end
   end
- -- Remove Triangle
- return tri, triObj;
+ return tri;
 end
 
 return drawLib;

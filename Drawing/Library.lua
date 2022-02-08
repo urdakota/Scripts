@@ -3,6 +3,7 @@ local drawLib = {};
 -- Variables
  local cam = workspace.CurrentCamera;
  local ScreenSize = cam.ViewportSize;
+ local uis = game:GetService('UserInputService')
  local UDim2Vector = function(udim)
   return Vector2.new((ScreenSize.X * udim.X.Scale) + udim.X.Offset,(ScreenSize.Y * udim.Y.Scale) + udim.Y.Offset)
  end;
@@ -11,8 +12,8 @@ local drawLib = {};
   local ml = game:GetService("UserInputService"):GetMouseLocation()
   return (ml.x >= X1 and ml.x <= (X1 + (X2 - X1))) and (ml.y >= Y1 and ml.y <= (Y1 + (Y2 - Y1)))
  end
- function over(obj)
-  if typeof(obj.Size) == "number" then
+ function over(obj,istext)
+  if istext then
    return obj.Visible == true and mouseOver({obj.Position.X- obj.Size/2,obj.Position.Y,obj.Position.X + obj.Size/2,obj.Position.Y + obj.Size})
   else
    return obj.Visible == true and mouseOver({obj.Position.X,obj.Position.Y,obj.Position.X + obj.Size.X,obj.Position.Y + obj.Size.Y})
@@ -152,58 +153,58 @@ function drawLib:Text(Args)
  -- Remove Text
  local texttbl = {};
  local overobj = false;
- local 1downobj = false;
- local 1upobj = false;
- local 2downobj = false;
- local 2upobj = false;
+ local onedownobj = false;
+ local oneupobj = false;
+ local twodownobj = false;
+ local twoupobj = false;
  local enterfunc = function() end;
  local leavefunc = function() end;
- local 1downfunc = function() end;
- local 2downfunc = function() end;
- local 1upfunc = function() end;
- local 2upfunc = function() end;
- local 1clickfunc = function() end;
- local 2clickfunc = function() end;
+ local onedownfunc = function() end;
+ local twodownfunc = function() end;
+ local oneupfunc = function() end;
+ local twoupfunc = function() end;
+ local oneclickfunc = function() end;
+ local twoclickfunc = function() end;
  game:GetService("RunService").RenderStepped:Connect(function()
-  if over(textObj) then
-   if overobj == false then enterfunc() end
+  if over(textObj,true) then
+   if overobj == false and enterfunc then enterfunc() end
    overobj = true;
   else
-   if overobj == true then leavefunc() end
+   if overobj == true and leavefunc then leavefunc() end
    overobj = false;
   end
  end)
  uis.InputBegan:Connect(function(input) 
   if input.UserInputType.Name == 'MouseButton1' then 
-   if over(textObj) then 
-    1downobj = true; 
-    1upobj = false; 
-    1downfunc(); 
+   if over(textObj,true) then 
+    onedownobj = true; 
+    oneupobj = false; 
+    if onedownfunc then onedownfunc() end
    end 
   end 
   if input.UserInputType.Name == 'MouseButton2' then 
-   if over(textObj) then 
-    2downobj = true; 
-    2upobj = false; 
-    2downfunc(); 
+   if over(textObj,true) then 
+    twodownobj = true; 
+    twoupobj = false; 
+    if twodownfunc then twodownfunc() end
    end 
   end 
  end)
  uis.InputEnded:Connect(function(input) 
   if input.UserInputType.Name == 'MouseButton1' then 
-   if over(textObj) then 
-    if 1downobj then 1clickfunc() end
-    1downobj = false;
-    1upobj = true; 
-    1upfunc(); 
+   if over(textObj,true) then 
+    if onedownobj and oneclickfunc then oneclickfunc() end;
+    onedownobj = false;
+    oneupobj = true; 
+    if oneupfunc then oneupfunc() end; 
    end 
   end 
   if input.UserInputType.Name == 'MouseButton2' then 
-   if over(textObj) then 
-    if 2downobj then 2clickfunc() end
-    2downobj = false;
-    2upobj = true; 
-    2upfunc(); 
+   if over(textObj,true) then 
+    if twodownobj then twoclickfunc() end
+    twodownobj = false;
+    twoupobj = true; 
+    if twoupfunc then twoupfunc() end; 
    end 
   end 
  end)
@@ -214,22 +215,22 @@ function drawLib:Text(Args)
   leavefunc = callback;
  end
  function texttbl:MouseButton1Down(callback)
-  1downfunc = callback;
+  onedownfunc = callback;
  end
  function texttbl:MouseButton1Up(callback)
-  1upfunc = callback;
+  oneupfunc = callback;
  end
  function texttbl:MouseButton1Click(callback)
-  1clickfunc = callback;
+  oneclickfunc = callback;
  end
  function texttbl:MouseButton2Down(callback)
-  2downfunc = callback;
+  twodownfunc = callback;
  end
  function texttbl:MouseButton2Up(callback)
-  2upfunc = callback;
+  twoupfunc = callback;
  end
  function texttbl:MouseButton2Click(callback)
-  2clickfunc = callback;
+  twoclickfunc = callback;
  end
  return text,texttbl;
 end
@@ -284,7 +285,9 @@ function drawLib:Image(Args)
    else
     imageObj[key] = value;
    end
-   return imageObj[key];
+   if tostring(key):lower() ~= "data" then
+    return imageObj[key];
+   end
   end
  })
  -- Update Image with base properties
@@ -295,58 +298,58 @@ function drawLib:Image(Args)
   end
  local imagefnc = {};
  local overobj = false;
- local 1downobj = false;
- local 1upobj = false;
- local 2downobj = false;
- local 2upobj = false;
+ local onedownobj = false;
+ local oneupobj = false;
+ local twodownobj = false;
+ local twoupobj = false;
  local enterfunc = function() end;
  local leavefunc = function() end;
- local 1downfunc = function() end;
- local 2downfunc = function() end;
- local 1upfunc = function() end;
- local 2upfunc = function() end;
- local 1clickfunc = function() end;
- local 2clickfunc = function() end;
+ local onedownfunc = function() end;
+ local twodownfunc = function() end;
+ local oneupfunc = function() end;
+ local twoupfunc = function() end;
+ local oneclickfunc = function() end;
+ local twoclickfunc = function() end;
  game:GetService("RunService").RenderStepped:Connect(function()
-  if over(imageObj) then
-   if overobj == false then enterfunc() end
+  if over(imageObj,false) then
+   if overobj == false and enterfunc then enterfunc() end
    overobj = true;
   else
-   if overobj == true then leavefunc() end
+   if overobj == true and leavefunc then leavefunc() end
    overobj = false;
   end
  end)
  uis.InputBegan:Connect(function(input) 
   if input.UserInputType.Name == 'MouseButton1' then 
-   if over(imageObj) then 
-    1downobj = true; 
-    1upobj = false; 
-    1downfunc(); 
+   if over(imageObj,false) then 
+    onedownobj = true; 
+    oneupobj = false; 
+    if onedownfunc then onedownfunc() end;
    end 
   end 
   if input.UserInputType.Name == 'MouseButton2' then 
-   if over(imageObj) then 
-    2downobj = true; 
-    2upobj = false; 
-    2downfunc(); 
+   if over(imageObj,false) then 
+    twodownobj = true; 
+    twoupobj = false; 
+    twodownfunc(); 
    end 
   end 
  end)
  uis.InputEnded:Connect(function(input) 
   if input.UserInputType.Name == 'MouseButton1' then 
-   if over(imageObj) then 
-    if 1downobj then 1clickfunc() end
-    1downobj = false;
-    1upobj = true; 
-    1upfunc(); 
+   if over(imageObj,false) then 
+    if onedownobj and oneclickfunc then oneclickfunc() end
+    onedownobj = false;
+    oneupobj = true; 
+    oneupfunc(); 
    end 
   end 
   if input.UserInputType.Name == 'MouseButton2' then 
-   if over(imageObj) then 
-    if 2downobj then 2clickfunc() end
-    2downobj = false;
-    2upobj = true; 
-    2upfunc(); 
+   if over(imageObj,false) then 
+    if twodownobj and twoclickfunc then twoclickfunc() end
+    twodownobj = false;
+    twoupobj = true; 
+    twoupfunc(); 
    end 
   end 
  end)
@@ -357,22 +360,22 @@ function drawLib:Image(Args)
   leavefunc = callback;
  end
  function imagefnc:MouseButton1Down(callback)
-  1downfunc = callback;
+  onedownfunc = callback;
  end
  function imagefnc:MouseButton1Up(callback)
-  1upfunc = callback;
+  oneupfunc = callback;
  end
  function imagefnc:MouseButton1Click(callback)
-  1clickfunc = callback;
+  oneclickfunc = callback;
  end
  function imagefnc:MouseButton2Down(callback)
-  2downfunc = callback;
+  twodownfunc = callback;
  end
  function imagefnc:MouseButton2Up(callback)
-  2upfunc = callback;
+  twoupfunc = callback;
  end
  function imagefnc:MouseButton2Click(callback)
-  2clickfunc = callback;
+  twoclickfunc = callback;
  end
  return image,imagefnc;
 end
@@ -499,20 +502,20 @@ function drawLib:Square(Args)
  
   local squarefnc = {};
   local overobj = false;
-  local 1downobj = false;
-  local 1upobj = false;
-  local 2downobj = false;
-  local 2upobj = false;
+  local onedownobj = false;
+  local oneupobj = false;
+  local twodownobj = false;
+  local twoupobj = false;
   local enterfunc = function() end;
   local leavefunc = function() end;
-  local 1downfunc = function() end;
-  local 2downfunc = function() end;
-  local 1upfunc = function() end;
-  local 2upfunc = function() end;
-  local 1clickfunc = function() end;
-  local 2clickfunc = function() end;
+  local onedownfunc = function() end;
+  local twodownfunc = function() end;
+  local oneupfunc = function() end;
+  local twoupfunc = function() end;
+  local oneclickfunc = function() end;
+  local twoclickfunc = function() end;
   game:GetService("RunService").RenderStepped:Connect(function()
-   if over(squareObj) then
+   if over(squareObj,false) then
     if overobj == false then enterfunc() end
     overobj = true;
    else
@@ -522,35 +525,35 @@ function drawLib:Square(Args)
   end)
   uis.InputBegan:Connect(function(input) 
    if input.UserInputType.Name == 'MouseButton1' then 
-    if over(squareObj) then 
-     1downobj = true; 
-     1upobj = false; 
-     1downfunc(); 
+    if over(squareObj,false) then 
+     onedownobj = true; 
+     oneupobj = false; 
+     onedownfunc(); 
     end 
    end 
    if input.UserInputType.Name == 'MouseButton2' then 
-    if over(squareObj) then 
-     2downobj = true; 
-     2upobj = false; 
-     2downfunc(); 
+    if over(squareObj,false) then 
+     twodownobj = true; 
+     twoupobj = false; 
+     twodownfunc(); 
     end 
    end 
   end)
   uis.InputEnded:Connect(function(input) 
    if input.UserInputType.Name == 'MouseButton1' then 
-    if over(squareObj) then 
-     if 1downobj then 1clickfunc() end
-     1downobj = false;
-     1upobj = true; 
-     1upfunc(); 
+    if over(squareObj,false) then 
+     if onedownobj then oneclickfunc() end
+     onedownobj = false;
+     oneupobj = true; 
+     oneupfunc(); 
     end 
    end 
    if input.UserInputType.Name == 'MouseButton2' then 
-    if over(squareObj) then 
-     if 2downobj then 2clickfunc() end
-     2downobj = false;
-     2upobj = true; 
-     2upfunc(); 
+    if over(squareObj,false) then 
+     if twodownobj then twoclickfunc() end
+     twodownobj = false;
+     twoupobj = true; 
+     twoupfunc(); 
     end 
    end 
   end)
@@ -561,22 +564,22 @@ function drawLib:Square(Args)
    leavefunc = callback;
   end
   function squarefnc:MouseButton1Down(callback)
-   1downfunc = callback;
+   onedownfunc = callback;
   end
   function squarefnc:MouseButton1Up(callback)
-   1upfunc = callback;
+   oneupfunc = callback;
   end
   function squarefnc:MouseButton1Click(callback)
-   1clickfunc = callback;
+   oneclickfunc = callback;
   end
   function squarefnc:MouseButton2Down(callback)
-   2downfunc = callback;
+   twodownfunc = callback;
   end
   function squarefnc:MouseButton2Up(callback)
-   2upfunc = callback;
+   twoupfunc = callback;
   end
   function squarefnc:MouseButton2Click(callback)
-   2clickfunc = callback;
+   twoclickfunc = callback;
   end
  return square,squarefnc;
 end
@@ -655,18 +658,18 @@ function drawLib:Rect(Args)
  
   local recttbl = {};
   local overobj = false;
-  local 1downobj = false;
-  local 1upobj = false;
-  local 2downobj = false;
-  local 2upobj = false;
+  local onedownobj = false;
+  local oneupobj = false;
+  local twodownobj = false;
+  local twoupobj = false;
   local enterfunc = function() end;
   local leavefunc = function() end;
-  local 1downfunc = function() end;
-  local 2downfunc = function() end;
-  local 1upfunc = function() end;
-  local 2upfunc = function() end;
-  local 1clickfunc = function() end;
-  local 2clickfunc = function() end;
+  local onedownfunc = function() end;
+  local twodownfunc = function() end;
+  local oneupfunc = function() end;
+  local twoupfunc = function() end;
+  local oneclickfunc = function() end;
+  local twoclickfunc = function() end;
   game:GetService("RunService").RenderStepped:Connect(function()
    if overpoint(rectObj) then
     if overobj == false then enterfunc() end
@@ -679,34 +682,34 @@ function drawLib:Rect(Args)
   uis.InputBegan:Connect(function(input) 
    if input.UserInputType.Name == 'MouseButton1' then 
     if overpoint(rectObj) then 
-     1downobj = true; 
-     1upobj = false; 
-     1downfunc(); 
+     onedownobj = true; 
+     oneupobj = false; 
+     onedownfunc(); 
     end 
    end 
    if input.UserInputType.Name == 'MouseButton2' then 
     if overpoint(rectObj) then 
-     2downobj = true; 
-     2upobj = false; 
-     2downfunc(); 
+     twodownobj = true; 
+     twoupobj = false; 
+     twodownfunc(); 
     end 
    end 
   end)
   uis.InputEnded:Connect(function(input) 
    if input.UserInputType.Name == 'MouseButton1' then 
     if overpoint(rectObj) then 
-     if 1downobj then 1clickfunc() end
-     1downobj = false;
-     1upobj = true; 
-     1upfunc(); 
+     if onedownobj then oneclickfunc() end
+     onedownobj = false;
+     oneupobj = true; 
+     oneupfunc(); 
     end 
    end 
    if input.UserInputType.Name == 'MouseButton2' then 
     if overpoint(rectObj) then 
-     if 2downobj then 2clickfunc() end
-     2downobj = false;
-     2upobj = true; 
-     2upfunc(); 
+     if twodownobj then twoclickfunc() end
+     twodownobj = false;
+     twoupobj = true; 
+     twoupfunc(); 
     end 
    end 
   end)
@@ -717,22 +720,22 @@ function drawLib:Rect(Args)
    leavefunc = callback;
   end
   function recttbl:MouseButton1Down(callback)
-   1downfunc = callback;
+   onedownfunc = callback;
   end
   function recttbl:MouseButton1Up(callback)
-   1upfunc = callback;
+   oneupfunc = callback;
   end
   function recttbl:MouseButton1Click(callback)
-   1clickfunc = callback;
+   oneclickfunc = callback;
   end
   function recttbl:MouseButton2Down(callback)
-   2downfunc = callback;
+   twodownfunc = callback;
   end
   function recttbl:MouseButton2Up(callback)
-   2upfunc = callback;
+   twoupfunc = callback;
   end
   function recttbl:MouseButton2Click(callback)
-   2clickfunc = callback;
+   twoclickfunc = callback;
   end
  return rect,recttbl;
 end

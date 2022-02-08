@@ -61,7 +61,7 @@ function drawLib:Line(Args)
     end) 
    end
 
-   return lineObj[Key]
+   return getrenderproperty(rawget(lineObj, "__OBJECT"), Key)
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "from" then
@@ -77,7 +77,7 @@ function drawLib:Line(Args)
    else
     lineObj[key] = value;
    end
-   return lineObj[key]
+   return getrenderproperty(rawget(lineObj, "__OBJECT"), key)
   end
  })
  -- Update Line with base properties
@@ -86,6 +86,7 @@ function drawLib:Line(Args)
     line[i] = v;
    end
   end
+ 
  return line;
 end
 function drawLib:Text(Args)
@@ -128,7 +129,7 @@ function drawLib:Text(Args)
     end) 
    end
 
-   return textObj[Key]
+   return getrenderproperty(rawget(textObj, "__OBJECT"), Key)
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -141,7 +142,7 @@ function drawLib:Text(Args)
    else
     textObj[key] = value;
    end
-   return textObj[key]
+   return getrenderproperty(rawget(textObj, "__OBJECT"), key)
   end
  })
  -- Update Text with base properties
@@ -232,6 +233,21 @@ function drawLib:Text(Args)
  function texttbl:MouseButton2Click(callback)
   twoclickfunc = callback;
  end
+ function texttbl:Tween(start,time,finish)
+  local Conn,TimePassed;
+  local function lerp(a, b, t)
+   return a * (1-t) + b * t
+  end
+  Conn = game:GetService("RunService").RenderStepped:Connect(function(Delta)
+   TimePassed = TimePassed + Delta
+
+   local Alpha = (math.min(TimePassed / time, 1))
+   lerp(start, finish, Alpha)
+   if TimePassed > time then
+    Conn:Disconnect()
+   end
+  end)
+ end
  return text,texttbl;
 end
 function drawLib:Image(Args)
@@ -267,7 +283,7 @@ function drawLib:Image(Args)
     end) 
    end
 
-   return imageObj[Key]
+   return getrenderproperty(rawget(imageObj, "__OBJECT"), Key)
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -286,7 +302,7 @@ function drawLib:Image(Args)
     imageObj[key] = value;
    end
    if tostring(key):lower() ~= "data" then
-    return imageObj[key]
+    return getrenderproperty(rawget(imageObj, "__OBJECT"), key)
    end
   end
  })
@@ -377,6 +393,21 @@ function drawLib:Image(Args)
  function imagefnc:MouseButton2Click(callback)
   twoclickfunc = callback;
  end
+ function imagefnc:Tween(start,time,finish)
+  local Conn,TimePassed;
+  local function lerp(a, b, t)
+   return a * (1-t) + b * t
+  end
+  Conn = game:GetService("RunService").RenderStepped:Connect(function(Delta)
+   TimePassed = TimePassed + Delta
+
+   local Alpha = (math.min(TimePassed / time, 1))
+   lerp(start, finish, Alpha)
+   if TimePassed > time then
+    Conn:Disconnect()
+   end
+  end)
+ end
  return image,imagefnc;
 end
 function drawLib:Circle(Args)
@@ -415,7 +446,7 @@ function drawLib:Circle(Args)
     end) 
    end
 
-   return circleObj[Key]
+   return getrenderproperty(rawget(circleObj, "__OBJECT"), Key)
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -430,7 +461,7 @@ function drawLib:Circle(Args)
    else
     circleObj[key] = value;
    end
-   return circleObj[key]
+   return getrenderproperty(rawget(circleObj, "__OBJECT"), key)
   end 
  })
  -- Update Circle with base properties
@@ -474,7 +505,7 @@ function drawLib:Square(Args)
     end) 
    end
 
-   return squareObj[Key]
+   return getrenderproperty(rawget(squareObj, "__OBJECT"), Key)
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -490,7 +521,7 @@ function drawLib:Square(Args)
    else
     squareObj[key] = value;
    end
-   return squareObj[key]
+   return getrenderproperty(rawget(squareObj, "__OBJECT"), key)
   end
  })
  -- Update Square with base properties
@@ -581,6 +612,21 @@ function drawLib:Square(Args)
   function squarefnc:MouseButton2Click(callback)
    twoclickfunc = callback;
   end
+  function squarefnc:Tween(start,time,finish)
+   local Conn,TimePassed;
+   local function lerp(a, b, t)
+    return a * (1-t) + b * t
+   end
+   Conn = game:GetService("RunService").RenderStepped:Connect(function(Delta)
+    TimePassed = TimePassed + Delta
+ 
+    local Alpha = (math.min(TimePassed / time, 1))
+    lerp(start, finish, Alpha)
+    if TimePassed > time then
+     Conn:Disconnect()
+    end
+   end)
+  end
  return square,squarefnc;
 end
 function drawLib:Rect(Args)
@@ -620,7 +666,7 @@ function drawLib:Rect(Args)
     end) 
    end
 
-   return rectObj[Key]
+   return getrenderproperty(rawget(rectObj, "__OBJECT"), Key)
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "pointa" then
@@ -646,7 +692,7 @@ function drawLib:Rect(Args)
    else
     rectObj[key] = value;
    end
-   return rectObj[key]
+   return getrenderproperty(rawget(rectObj, "__OBJECT"), key)
   end
  })
  -- Update Rect with base properties
@@ -737,6 +783,21 @@ function drawLib:Rect(Args)
   function recttbl:MouseButton2Click(callback)
    twoclickfunc = callback;
   end
+  function recttbl:Tween(start,time,finish)
+   local Conn,TimePassed;
+   local function lerp(a, b, t)
+    return a * (1-t) + b * t
+   end
+   Conn = game:GetService("RunService").RenderStepped:Connect(function(Delta)
+    TimePassed = TimePassed + Delta
+ 
+    local Alpha = (math.min(TimePassed / time, 1))
+    lerp(start, finish, Alpha)
+    if TimePassed > time then
+     Conn:Disconnect()
+    end
+   end)
+  end
  return rect,recttbl;
 end
 function drawLib:Triangle(Args)
@@ -774,7 +835,7 @@ function drawLib:Triangle(Args)
     end) 
    end
 
-   return triObj[Key]
+   return getrenderproperty(rawget(triObj, "__OBJECT"), Key)
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "pointa" then
@@ -795,7 +856,7 @@ function drawLib:Triangle(Args)
    else
     triObj[key] = value;
    end
-   return triObj[key]
+   return getrenderproperty(triObj, key)
   end
  })
  -- Update Triangle with base properties

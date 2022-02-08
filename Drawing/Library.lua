@@ -233,21 +233,6 @@ function drawLib:Text(Args)
  function texttbl:MouseButton2Click(callback)
   twoclickfunc = callback;
  end
- function texttbl:Tween(start,time,finish)
-  local Conn,TimePassed;
-  local function lerp(a, b, t)
-   return a * (1-t) + b * t
-  end
-  Conn = game:GetService("RunService").RenderStepped:Connect(function(Delta)
-   TimePassed = TimePassed + Delta
-
-   local Alpha = (math.min(TimePassed / time, 1))
-   lerp(start, finish, Alpha)
-   if TimePassed > time then
-    Conn:Disconnect()
-   end
-  end)
- end
  return text,texttbl;
 end
 function drawLib:Image(Args)
@@ -392,21 +377,6 @@ function drawLib:Image(Args)
  end
  function imagefnc:MouseButton2Click(callback)
   twoclickfunc = callback;
- end
- function imagefnc:Tween(start,time,finish)
-  local Conn,TimePassed;
-  local function lerp(a, b, t)
-   return a * (1-t) + b * t
-  end
-  Conn = game:GetService("RunService").RenderStepped:Connect(function(Delta)
-   TimePassed = TimePassed + Delta
-
-   local Alpha = (math.min(TimePassed / time, 1))
-   lerp(start, finish, Alpha)
-   if TimePassed > time then
-    Conn:Disconnect()
-   end
-  end)
  end
  return image,imagefnc;
 end
@@ -612,21 +582,6 @@ function drawLib:Square(Args)
   function squarefnc:MouseButton2Click(callback)
    twoclickfunc = callback;
   end
-  function squarefnc:Tween(start,time,finish)
-   local Conn,TimePassed;
-   local function lerp(a, b, t)
-    return a * (1-t) + b * t
-   end
-   Conn = game:GetService("RunService").RenderStepped:Connect(function(Delta)
-    TimePassed = TimePassed + Delta
- 
-    local Alpha = (math.min(TimePassed / time, 1))
-    lerp(start, finish, Alpha)
-    if TimePassed > time then
-     Conn:Disconnect()
-    end
-   end)
-  end
  return square,squarefnc;
 end
 function drawLib:Rect(Args)
@@ -782,21 +737,6 @@ function drawLib:Rect(Args)
   end
   function recttbl:MouseButton2Click(callback)
    twoclickfunc = callback;
-  end
-  function recttbl:Tween(start,time,finish)
-   local Conn,TimePassed;
-   local function lerp(a, b, t)
-    return a * (1-t) + b * t
-   end
-   Conn = game:GetService("RunService").RenderStepped:Connect(function(Delta)
-    TimePassed = TimePassed + Delta
- 
-    local Alpha = (math.min(TimePassed / time, 1))
-    lerp(start, finish, Alpha)
-    if TimePassed > time then
-     Conn:Disconnect()
-    end
-   end)
   end
  return rect,recttbl;
 end

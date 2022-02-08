@@ -77,7 +77,7 @@ function drawLib:Line(Args)
    else
     lineObj[key] = value;
    end
-   return lineObj[key];
+   return getrenderproperty(lineObj, key)
   end
  })
  -- Update Line with base properties
@@ -141,7 +141,7 @@ function drawLib:Text(Args)
    else
     textObj[key] = value;
    end
-   return textObj[key];
+   return getrenderproperty(textObj, key)
   end
  })
  -- Update Text with base properties
@@ -286,7 +286,7 @@ function drawLib:Image(Args)
     imageObj[key] = value;
    end
    if tostring(key):lower() ~= "data" then
-    return imageObj[key];
+    return getrenderproperty(imageObj, key)
    end
   end
  })
@@ -430,7 +430,7 @@ function drawLib:Circle(Args)
    else
     circleObj[key] = value;
    end
-   return 
+   return getrenderproperty(circleObj, key)
   end 
  })
  -- Update Circle with base properties
@@ -490,7 +490,7 @@ function drawLib:Square(Args)
    else
     squareObj[key] = value;
    end
-   return squareObj[key];
+   return getrenderproperty(squareObj, key)
   end
  })
  -- Update Square with base properties
@@ -646,7 +646,7 @@ function drawLib:Rect(Args)
    else
     rectObj[key] = value;
    end
-   return rectObj[key];
+   return getrenderproperty(rectObj, key)
   end
  })
  -- Update Rect with base properties
@@ -795,7 +795,7 @@ function drawLib:Triangle(Args)
    else
     triObj[key] = value;
    end
-   return triObj[key];
+   return getrenderproperty(triObj, key)
   end
  })
  -- Update Triangle with base properties

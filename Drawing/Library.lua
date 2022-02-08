@@ -287,6 +287,7 @@ function drawLib:Image(Args)
     imageObj[key] = value;
    end
    if tostring(key):lower() ~= "data" then
+    if tostring(key):lower() == "color" then return value end
     return imageObj[key]
    end
   end

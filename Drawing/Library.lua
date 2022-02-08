@@ -61,7 +61,7 @@ function drawLib:Line(Args)
     end) 
    end
 
-   return getrenderproperty(rawget(lineObj, "__OBJECT"), Key)
+   return lineObj[Key]
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "from" then
@@ -77,7 +77,7 @@ function drawLib:Line(Args)
    else
     lineObj[key] = value;
    end
-   return getrenderproperty(rawget(lineObj, "__OBJECT"), key)
+   return lineObj[key]
   end
  })
  -- Update Line with base properties
@@ -129,7 +129,7 @@ function drawLib:Text(Args)
     end) 
    end
 
-   return getrenderproperty(rawget(textObj, "__OBJECT"), Key)
+   return textObj[Key]
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -142,7 +142,7 @@ function drawLib:Text(Args)
    else
     textObj[key] = value;
    end
-   return getrenderproperty(rawget(textObj, "__OBJECT"), key)
+   return textObj[key]
   end
  })
  -- Update Text with base properties
@@ -283,7 +283,7 @@ function drawLib:Image(Args)
     end) 
    end
 
-   return getrenderproperty(rawget(imageObj, "__OBJECT"), Key)
+   return imageObj[Key]
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -302,7 +302,7 @@ function drawLib:Image(Args)
     imageObj[key] = value;
    end
    if tostring(key):lower() ~= "data" then
-    return getrenderproperty(rawget(imageObj, "__OBJECT"), key)
+    return imageObj[key]
    end
   end
  })
@@ -446,7 +446,7 @@ function drawLib:Circle(Args)
     end) 
    end
 
-   return getrenderproperty(rawget(circleObj, "__OBJECT"), Key)
+   return circleObj[Key]
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -461,7 +461,7 @@ function drawLib:Circle(Args)
    else
     circleObj[key] = value;
    end
-   return getrenderproperty(rawget(circleObj, "__OBJECT"), key)
+   return circleObj[key]
   end 
  })
  -- Update Circle with base properties
@@ -505,7 +505,7 @@ function drawLib:Square(Args)
     end) 
    end
 
-   return getrenderproperty(rawget(squareObj, "__OBJECT"), Key)
+   return squareObj[Key]
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -521,7 +521,7 @@ function drawLib:Square(Args)
    else
     squareObj[key] = value;
    end
-   return getrenderproperty(rawget(squareObj, "__OBJECT"), key)
+   return squareObj[key]
   end
  })
  -- Update Square with base properties
@@ -666,7 +666,7 @@ function drawLib:Rect(Args)
     end) 
    end
 
-   return getrenderproperty(rawget(rectObj, "__OBJECT"), Key)
+   return rectObj[Key]
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "pointa" then
@@ -692,7 +692,7 @@ function drawLib:Rect(Args)
    else
     rectObj[key] = value;
    end
-   return getrenderproperty(rawget(rectObj, "__OBJECT"), key)
+   return rectObj[key]
   end
  })
  -- Update Rect with base properties
@@ -835,7 +835,7 @@ function drawLib:Triangle(Args)
     end) 
    end
 
-   return getrenderproperty(rawget(triObj, "__OBJECT"), Key)
+   return triObj[Key]
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "pointa" then
@@ -856,7 +856,7 @@ function drawLib:Triangle(Args)
    else
     triObj[key] = value;
    end
-   return getrenderproperty(triObj, key)
+   return triObj[key]
   end
  })
  -- Update Triangle with base properties

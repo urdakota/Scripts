@@ -237,14 +237,6 @@ function drawLib:Text(Args)
 end
 function drawLib:Image(Args)
  local image,imageObj = {}, Drawing.new("Image");
- -- Set Defaults
-  imageObj.Position = UDim2Vector(UDim2.new(0.5,0,0,0));
-  imageObj.Size = UDim2Vector(UDim2.new(0.5,0,0.5,0));
-  imageObj.Visible = true;
-  imageObj.Data = "";
-  imageObj.Rounding = 32;
-  imageObj.Transparency = 0.5;
-  imageObj.ZIndex = 1;
  --[[ INSTRUCTIONS FOR PROPERTIES OF IMAGE
   Position: Center of Image (UDim2/Vector2);
   Size: Size of Image (UDim2/Vector2);
@@ -255,6 +247,7 @@ function drawLib:Image(Args)
   Color: Color from RGB;
   ZIndex: Image's Position above screen objects;
  ]]
+ local color;
  setmetatable(image, {
   __index = function(Table, Key)
     -- Thanks synapse Source!!!
@@ -267,8 +260,13 @@ function drawLib:Image(Args)
      rawset(imageObj, "__OBJECT_EXISTS", false)
     end) 
    end
-
-   return imageObj[Key]
+   if tostring(Key):lower() ~= "data"  then
+    if Key == "Color" then 
+     return color
+    else
+     return imageObj[Key]
+    end
+   end
   end,
   __newindex = function(self,key,value) 
    if tostring(key):lower() == "position" then
@@ -282,17 +280,21 @@ function drawLib:Image(Args)
     if typeof(value) == "Vector3" then value =  Vector2.new(cam:WorldToScreenPoint(value).X,cam:WorldToScreenPoint(value).Y) end
     imageObj["Size"] = value;
    elseif tostring(key):lower() == "color" then
+    color = value;
     imageObj["Data"] = game:HttpGet('https://www.htmlcsscolor.com/preview/gallery/'..tostring(value.R)..tostring(value.G)..tostring(value.B)..'.png')
    else
     imageObj[key] = value;
    end
    if tostring(key):lower() ~= "data" then
-    if tostring(key):lower() == "color" then return value end
-    return imageObj[key]
+    if key == "Color" then 
+     return color
+    else
+     return imageObj[key]
+    end
    end
   end
  })
- -- Update Image with base properties
+ -- Update Image with properties
   for i,v in pairs(Args) do
    if table.find({"Position","Size","Visible","Transparency","ZIndex","Rounding","Data"},i) then
     image[i] = v;

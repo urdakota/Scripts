@@ -1,5 +1,6 @@
 local drawLib = {};
 
+getgenv().CreatedPapers = getgenv().CreatedPapers or {};
 -- Variables
  local cam = workspace.CurrentCamera;
  local ScreenSize = cam.ViewportSize;
@@ -31,6 +32,7 @@ local drawLib = {};
 -- Drawing
 function drawLib:Line(Args)
  local line,lineObj = {}, Drawing.new("Line");
+ table.insert(lineObj,getgenv().CreatedPapers);
  -- Set Defaults
   lineObj.From = UDim2Vector(UDim2.new(0.5,0,0,0));
   lineObj.To = UDim2Vector(UDim2.new(0.5,0,0.5,0));
@@ -91,6 +93,7 @@ function drawLib:Line(Args)
 end
 function drawLib:Text(Args)
  local text,textObj = {}, Drawing.new("Text");
+ table.insert(textObj,getgenv().CreatedPapers);
  -- Set Defaults
   textObj.Text = "TextLabel";
   textObj.Size = 20;
@@ -237,6 +240,7 @@ function drawLib:Text(Args)
 end
 function drawLib:Image(Args)
  local image,imageObj = {}, Drawing.new("Image");
+ table.insert(imageObj,getgenv().CreatedPapers);
  --[[ INSTRUCTIONS FOR PROPERTIES OF IMAGE
   Position: Center of Image (UDim2/Vector2);
   Size: Size of Image (UDim2/Vector2);
@@ -385,6 +389,7 @@ function drawLib:Image(Args)
 end
 function drawLib:Circle(Args)
  local circle,circleObj = {}, Drawing.new("Circle");
+ table.insert(circleObj,getgenv().CreatedPapers);
  -- Set Defaults
   circleObj.Position = UDim2Vector(UDim2.new(0.5,0,0.5,0));
   circleObj.Radius = 90;
@@ -447,6 +452,7 @@ function drawLib:Circle(Args)
 end
 function drawLib:Square(Args)
  local square,squareObj = {}, Drawing.new("Square");
+ table.insert(squareObj,getgenv().CreatedPapers);
  -- Set Defaults
   squareObj.Position = UDim2Vector(UDim2.new(0.5,0,0,0));
   squareObj.Size = UDim2Vector(UDim2.new(0.5,0,0.5,0));
@@ -589,6 +595,7 @@ function drawLib:Square(Args)
 end
 function drawLib:Rect(Args)
  local rect,rectObj = {}, Drawing.new("Quad");
+ table.insert(rectObj,getgenv().CreatedPapers);
  -- Set Defaults
   rectObj.PointA = UDim2Vector(UDim2.new(0.25,0,0.25,0));
   rectObj.PointB = UDim2Vector(UDim2.new(0.5,0,0.25,0));
@@ -745,6 +752,7 @@ function drawLib:Rect(Args)
 end
 function drawLib:Triangle(Args)
  local tri,triObj = {}, Drawing.new("Triangle");
+ table.insert(triObj,getgenv().CreatedPapers);
  -- Set Defaults
   triObj.PointA = UDim2Vector(UDim2.new(0.25,0,0.25,0));
   triObj.PointB = UDim2Vector(UDim2.new(0.5,0,0.25,0));
@@ -809,6 +817,11 @@ function drawLib:Triangle(Args)
    end
   end
  return tri;
+end
+function drawLib:ClearOldItems()
+ for i,v in pairs(getgenv().CreatedPapers) do
+  v:Remove();
+ end
 end
 
 return drawLib;

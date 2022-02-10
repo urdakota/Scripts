@@ -821,6 +821,7 @@ end
 function drawLib:ClearOldItems()
  for i,v in pairs(getgenv().CreatedPapers) do
   v:Remove();
+  table.remove(getgenv().CreatedPapers,table.find(getgenv().CreatedPapers,v))
  end
 end
 

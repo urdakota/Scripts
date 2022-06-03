@@ -13,6 +13,7 @@ while wait(1) do
             wait()
         until tonumber(string.sub(game.Players.LocalPlayer.PlayerGui.GameUI.Stamina.Bar.Amount.Text,1,-2)) > 80
         game.Players.LocalPlayer.Character.Humanoid.Jump = true
+        repeat wait() until game.Players.LocalPlayer.Character.Humanoid.SeatPart == nil
         sit.CFrame = oldseat;
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame  = old;
     end

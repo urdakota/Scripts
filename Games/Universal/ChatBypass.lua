@@ -1,6 +1,8 @@
+--[[ Add you own bypasses below ]]--
+
 local bypassedWords = {
    ["gay"]       = "g_ay",
-   ["ass"]       = "a_ss",
+   ["ass"]       = "as_s",
    ["fag"]       = "f_ag",
    ["tit"]       = "ti_t",
    ["cum"]       = "c_um",
@@ -14,7 +16,7 @@ local bypassedWords = {
    ["cock"]      = "c_ock",
    ["cunt"]      = "c_unt",
    ["cuck"]      = "c_uck",
-   ["dick"]      = "d_ick",
+   ["dick"]      = "di!ck",
    ["slut"]      = "slu_t",
    ["bitch"]     = "bi_tch",
    ["boobs"]     = "boo_bs",
@@ -25,31 +27,31 @@ local bypassedWords = {
    ["testicles"] = "tes_ticles",
 }
 
+--<< DONT EDIT UNLESS YOU KNOW WHAT YOUR DOING! >>--
 
---// dont edit this if u dk what ur doing
-local bypassStr = "%s{{aieixzvzx:%s}}" -- aieixzvzx is just a random keyboard slam
+local bypassStr = "%s{{aieixzvzx:%s}}"
+local specialStr ="%s{{zczxczvzx:%s}}"
 
 function bypassMessage(message)
-   local bypassedMessage = {}
-
-   for index, word in ipairs( message:split(" ") ) do
-       local wordFormat = bypassedWords[word]
-       if (not wordFormat) then
-           bypassedMessage[index] = word
-           continue
-       end
-       
-       wordFormat = wordFormat:split("_")
-       word = bypassStr:format(wordFormat[1], wordFormat[2]) 
-       bypassedMessage[index] = word
-       
-       if index == #message:split(" ") then
-           bypassedMessage[index] = word .. " //fn\\💀"
-       end
-   end
-   bypassedMessage = table.concat(bypassedMessage, " ")
-   
-   return bypassedMessage 
+    local bypassed = false
+    for word, bypass in pairs(bypassedWords) do
+        if string.find(message, word) then
+            bypassed = true
+            local bypassS, replace
+            if string.find(bypass,"!") then
+                bypassS = specialStr
+                replace = bypass:split("!")
+            elseif string.find(bypass,"_") then
+                bypassS = bypassStr
+                replace = bypass:split("_")
+            end
+            message = message:gsub(word,bypassS:format(replace[1], replace[2]))
+        end
+    end
+    if bypassed then
+        message = message .. " //fn\\💀"
+    end
+    return message 
 end
 
 local replicatedStorage = game:GetService("ReplicatedStorage")

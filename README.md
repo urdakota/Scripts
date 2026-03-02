@@ -1,6 +1,6 @@
-# Scripts
-## Stuff that i made and that can be public for you!
+# Scripts for Roblox Games
+## A lot of these scripts were for various Roblox Games my friends and I were playing.
+## This repository is now an archive of my work and proof of experience with the language.
 
-# Please Read
-### these scripts are ONLY open source due to my kindness
-### I will obfuscate these if I'm not credited!
+# Other Info
+## I no longer program in Lua or make/use scripts in Roblox.
